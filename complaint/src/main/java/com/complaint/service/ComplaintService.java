@@ -9,7 +9,7 @@ public interface ComplaintService {
 
     List<ComplaintDto> saveComplaint(ComplaintRequest complaintRequest);
 
-    ComplaintDto updateComplaint(ComplaintRequest complaintRequest);
+    List<ComplaintDto>  updateComplaint(ComplaintRequest complaintRequest);
 
     ComplaintDto getSingleComplaint(Long id);
 
