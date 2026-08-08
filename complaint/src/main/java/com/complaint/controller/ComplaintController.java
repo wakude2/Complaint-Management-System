@@ -38,6 +38,13 @@ public class ComplaintController {
         ComplaintDto response = complaintService.getSingleComplaint(complaintId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/person/{personId}")
+    public ResponseEntity<List<ComplaintDto>> getComplaintByPersonId(@PathVariable Long personId){
+        List<ComplaintDto> response = complaintService.getComplaintByPersonId(personId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
     @DeleteMapping("/delete/{complaintId}")
     public ResponseEntity<String> deleteComplaint(@PathVariable Long complaintId){
         complaintService.deleteComplaint(complaintId);

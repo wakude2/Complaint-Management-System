@@ -1,10 +1,13 @@
 package com.society.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Column;
 
 import java.time.LocalDate;
+import java.util.List;
 
-	public class PersonDto {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PersonDto {
 	private Long id;
 		@Column(name = "first_name")
 		private String firstName;
@@ -21,6 +24,15 @@ import java.time.LocalDate;
 		private String password;
 		@Column(name = "confirm_password")
 		private String confirm_password;
+		private List<ComplaintDto> complaint;
+
+	public List<ComplaintDto> getComplaint() {
+		return complaint;
+	}
+
+	public void setComplaint(List<ComplaintDto> complaint) {
+		this.complaint = complaint;
+	}
 
 	public Long getId() {
 		return id;

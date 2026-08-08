@@ -1,10 +1,15 @@
 package com.society.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.society.client.ComplaintClient;
+import com.society.model.dto.ComplaintDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +22,17 @@ import com.society.service.PersonService;
 
 @Service
 public class PersonServiceImpl implements PersonService {
-	
+
+	private static final Logger log = LoggerFactory.getLogger(PersonServiceImpl.class);
+
 	private final PersonRepository personRepository;
 	private final ModelMapper modelMapper;
+	private final ComplaintClient complaintClient;
 	
-	public PersonServiceImpl(PersonRepository personRepository, ModelMapper modelMapper) {
+	public PersonServiceImpl(PersonRepository personRepository, ModelMapper modelMapper, ComplaintClient complaintClient) {
 		this.personRepository= personRepository;
 		this.modelMapper=modelMapper;
+		this.complaintClient = complaintClient;
 	}
 
 	@Override
@@ -73,7 +82,19 @@ public class PersonServiceImpl implements PersonService {
 	public PersonDto getSinglePerson(Long id) {
 		// TODO Auto-generated method stub
 		Person person= personRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Person not found with id: " + id+"!!!"));
-		return modelMapper.map(person, PersonDto.class);
+		List<ComplaintDto> complaints= new ArrayList<>();
+		PersonDto dto= modelMapper.map(person, PersonDto.class);
+		try {
+			complaints= complaintClient.getComplaintByPersonId(person.getId());
+			dto.setComplaint(complaints);
+        }
+		catch (Exception e) {
+			log.error("complaints not found for person Id: {}", person.getId());
+		}
+
+
+
+		return dto;
 	}
 
 	@Override
@@ -83,13 +104,28 @@ public class PersonServiceImpl implements PersonService {
 		if(persons.isEmpty()) {
 			throw new ResourceNotFoundException("No Person Found");
 		}
-		return persons.stream().map( per -> modelMapper.map(per, PersonDto.class)).toList();
+		List<PersonDto> personDtoList= persons.stream().map( per -> modelMapper.map(per, PersonDto.class)).toList();
+		List<PersonDto> response = new ArrayList<>();
+		for(PersonDto person: personDtoList ){
+			List<ComplaintDto> complaints= new ArrayList<>();
+			try {
+				complaints= complaintClient.getComplaintByPersonId(person.getId());
+				person.setComplaint(complaints);
+			}
+			catch (Exception e) {
+				log.error("complaints not found for person Id: {}", person.getId());
+			}
+
+			response.add(person);
+		}
+		return response;
 	}
 
 	@Override
 	public PersonDto getPersonByusernameAndfirst_name(String username, String first_name) {
 		Person person=personRepository.findByUsernameAndFirstName(username,first_name).orElseThrow(()-> new ResourceNotFoundException("Person Not Found with username:" + username+"and First Name"+first_name));
 		return modelMapper.map(person, PersonDto.class);
+
 	}
 //
 //	@Override

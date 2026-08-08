@@ -9,11 +9,13 @@
         <module name="EUREKA-SERVER" />
         <module name="complaint" />
         <module name="Person" />
+        <module name="AUTH" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AUTH" options="-parameters" />
       <module name="EUREKA-SERVER" options="-parameters" />
       <module name="Person" options="-parameters" />
       <module name="complaint" options="-parameters" />

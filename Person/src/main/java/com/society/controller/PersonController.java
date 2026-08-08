@@ -38,7 +38,7 @@ public class PersonController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<PersonDto> getSingleEmployee(@PathVariable Long id){
+	public ResponseEntity<PersonDto> getSinglePerson(@PathVariable Long id){
 		PersonDto response = personService.getSinglePerson(id);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
